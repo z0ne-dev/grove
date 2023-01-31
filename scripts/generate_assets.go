@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/shurcooL/httpfs/union"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -18,18 +19,22 @@ func main() {
 	cwd, err := os.Getwd()
 	must(err)
 
-	dir := filepath.Join(cwd, os.Args[1])
+	assets := filepath.Join(cwd, "build", "assets")
+	templates := filepath.Join(cwd, "templates")
 
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		must(os.MkdirAll(dir, os.ModePerm))
+	if _, err := os.Stat(assets); os.IsNotExist(err) {
+		must(os.MkdirAll(assets, os.ModePerm))
 	}
 
-	fs := http.Dir(dir)
+	fs := union.New(map[string]http.FileSystem{
+		"/templates": http.Dir(templates),
+		"/assets":    http.Dir(assets),
+	})
 
 	must(vfsgen.Generate(fs, vfsgen.Options{
 		Filename:     filepath.Join(cwd, "assets_generated.go"),
 		PackageName:  "resource",
-		VariableName: "vfs",
+		VariableName: "All",
 		BuildTags:    "!dev",
 	}))
 }
