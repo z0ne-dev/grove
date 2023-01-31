@@ -1,0 +1,5 @@
+logging:
+  enable_file: false
+
+http:
+  public_address: http://localhost:8421/
