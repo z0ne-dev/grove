@@ -78,6 +78,10 @@ func createRouter(logger slog.Logger) *chi.Mux {
 		// catch panics
 		middleware.Recoverer,
 
+		// clean up paths
+		middleware.CleanPath,
+		middleware.StripSlashes,
+
 		// logging relevant data structures
 		middleware.RequestID,
 		middleware.RealIP,
@@ -94,6 +98,8 @@ func createRouter(logger slog.Logger) *chi.Mux {
 
 		// forward head if needed
 		middleware.GetHead,
+
+		middleware.Heartbeat("/healthz"),
 	)
 
 	router.Handle("/*", http.FileServer(resource.Assets))

@@ -3,11 +3,12 @@ package application
 import (
 	"cdr.dev/slog"
 	"context"
+	"github.com/ztrue/shutdown"
 	"grove/internal/service"
 	"net/http"
 	"os"
-	"os/signal"
 	"syscall"
+	"time"
 )
 
 var _ App = (*app)(nil)
@@ -21,43 +22,30 @@ type app struct {
 }
 
 func (a *app) ListenAndServe() {
-	s := a.container.Server()
+	server := a.container.Server()
 	configuration := a.container.Config()
 	slogger := a.container.Logger().Named("server")
 
-	errChan := make(chan error, 1)
-	stopChan := make(chan os.Signal, 1)
-
-	go func(h *http.Server, errChan chan error) {
-		errChan <- h.ListenAndServe()
-	}(s, errChan)
+	go func(h *http.Server) {
+		err := h.ListenAndServe()
+		slogger.Critical(context.Background(), "server error", slog.Error(err))
+	}(server)
 	defer func(s *http.Server) {
 		_ = s.Close() // No need to handle error here
-	}(s)
+	}(server)
 
-	signal.Notify(stopChan, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
-	slogger.Info(
-		context.Background(),
-		"server started",
-		slog.F("addr", configuration.Http.PublicAddress),
-	)
+	slogger.Info(context.Background(), "server started", slog.F("address", configuration.Http.PublicAddress), slog.F("listen", configuration.Http.Listen))
 
-	select {
-	case err := <-errChan:
+	shutdown.Add(func() {
+		slogger.Debug(context.Background(), "shutting down server")
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		err := server.Shutdown(ctx)
 		if err != nil {
-			slogger.Fatal(
-				context.Background(),
-				"server returned with an error",
-				slog.Error(err),
-			)
+			slogger.Fatal(context.Background(), "error shutting down server", slog.Error(err))
 		}
-	case sig := <-stopChan:
-		slogger.Debug(
-			context.Background(),
-			"received stop signal",
-			slog.F("signal", sig),
-		)
-	}
+		cancel()
+	})
+	shutdown.Listen(syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 }
 
 func New(container service.Container) App {
