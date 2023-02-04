@@ -19,12 +19,8 @@ func main() {
 	cwd, err := os.Getwd()
 	must(err)
 
-	assets := filepath.Join(cwd, "build", "assets")
+	assets := filepath.Join(cwd, "frontend", "build")
 	templates := filepath.Join(cwd, "templates")
-
-	if _, err := os.Stat(assets); os.IsNotExist(err) {
-		must(os.MkdirAll(assets, os.ModePerm))
-	}
 
 	fs := union.New(map[string]http.FileSystem{
 		"/templates": http.Dir(templates),

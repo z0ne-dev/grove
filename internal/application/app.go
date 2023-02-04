@@ -14,11 +14,20 @@ import (
 var _ App = (*app)(nil)
 
 type App interface {
+	ConfigureRouter() App
 	ListenAndServe()
 }
 
 type app struct {
 	container service.Container
+}
+
+func (a *app) ConfigureRouter() App {
+	r := a.container.Router()
+	set := a.container.Jet()
+	NewGenericRoutes(set).Routes(r)
+
+	return a
 }
 
 func (a *app) ListenAndServe() {

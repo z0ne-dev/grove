@@ -1,0 +1,11 @@
+{{extends "layouts/base.jet"}}
+
+{{block documentBody()}}
+<h1>Asset Packaging example</h1>
+
+<nav>
+    { -yield menu()- }
+</nav>
+
+{ -include "includes/_partial.jet"- }
+{{end}}

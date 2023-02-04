@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>{{block pageTitle()}}Grove{{end}}</title>
+        <link rel="stylesheet" href="/index.css">
+        {{block documentHead()}}{{end}}
+    </head>
+    <body>
+        {{block documentBody()}}{{end}}
+    </body>
+</html>

@@ -13,6 +13,6 @@ func init() {
 	wd, _ := os.Getwd()
 	All = union.New(map[string]http.FileSystem{
 		"/templates": http.Dir(filepath.Join(wd, "templates")),
-		"/assets":    http.Dir(filepath.Join(wd, "build", "assets")),
+		"/assets":    http.Dir(filepath.Join(wd, "frontend", "build")),
 	})
 }

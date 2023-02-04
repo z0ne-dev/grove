@@ -70,7 +70,7 @@ var rootCmd = &cobra.Command{
 
 		c := service.New(slogger, configuration)
 
-		application.New(c).ListenAndServe()
+		application.New(c).ConfigureRouter().ListenAndServe()
 		return nil
 	},
 }

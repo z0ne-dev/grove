@@ -10,6 +10,6 @@ var (
 )
 
 func init() {
-	Assets = NewPrefixFileSystem(All, "assets/")
-	Templates = NewPrefixFileSystem(All, "templates/")
+	Assets = NewPrefixFileSystem(All, "/assets/")
+	Templates = NewPrefixFileSystem(All, "/templates/")
 }
