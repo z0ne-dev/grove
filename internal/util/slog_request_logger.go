@@ -49,21 +49,6 @@ type SlogChiLogEntry struct {
 	fields  []slog.Field
 }
 
-func (logEntry *SlogChiLogEntry) Write(status int, bytes int, _ http.Header, elapsed time.Duration, _ any) {
-	fields := []slog.Field{
-		slog.F("response_status", status),
-		slog.F("response_text", http.StatusText(status)),
-		slog.F("response_size", uint64(bytes)),
-		slog.F("response_duration", elapsed),
-	}
-
-	if logEntry.panic {
-		logEntry.logger.Info(context.Background(), "request complete", fields...)
-	} else {
-		logEntry.logger.Error(context.Background(), "request complete", fields...)
-	}
-}
-
 func (logEntry *SlogChiLogEntry) Panic(v interface{}, stack []byte) {
 	err, ok := v.(error)
 	if !ok {
@@ -72,4 +57,21 @@ func (logEntry *SlogChiLogEntry) Panic(v interface{}, stack []byte) {
 
 	logEntry.panic = true
 	logEntry.logger = logEntry.logger.With(slog.Error(err), slog.F("stack", string(stack)))
+}
+
+func (logEntry *SlogChiLogEntry) Write(status int, bytes int, _ http.Header, elapsed time.Duration, _ any) {
+	fields := []slog.Field{
+		slog.F("response_status", status),
+		slog.F("response_text", http.StatusText(status)),
+		slog.F("response_size", uint64(bytes)),
+		slog.F("response_duration", elapsed),
+	}
+
+	if !logEntry.panic {
+		if !logEntry.panic {
+			logEntry.logger.Info(context.Background(), "request complete", fields...)
+		} else {
+			logEntry.logger.Error(context.Background(), "request complete", fields...)
+		}
+	}
 }
