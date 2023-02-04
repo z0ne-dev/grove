@@ -68,7 +68,10 @@ var rootCmd = &cobra.Command{
 			slog.F("arch", runtime.GOARCH),
 		)
 
-		c := service.New(slogger, configuration)
+		c, err := service.New(slogger, configuration)
+		if err != nil {
+			return err
+		}
 
 		application.New(c).ConfigureRouter().ListenAndServe()
 		return nil

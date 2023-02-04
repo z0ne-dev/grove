@@ -3,8 +3,9 @@ package config
 import "cdr.dev/slog"
 
 type Config struct {
-	Logging Logging `json:"logging"`
-	Http    Http    `json:"http"`
+	Logging  Logging `json:"logging"`
+	Http     Http    `json:"http"`
+	Postgres string  `json:"postgres"`
 }
 
 type Http struct {

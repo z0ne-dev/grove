@@ -7,6 +7,8 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/cors"
+	"github.com/jackc/pgx/v4/pgxpool"
+	"go.uber.org/multierr"
 	"grove/internal/config"
 	"grove/internal/resource"
 	"grove/internal/util"
@@ -15,12 +17,12 @@ import (
 
 var _ Container = (*container)(nil)
 
-type Container interface {
-	Logger() slog.Logger
-	Config() *config.Config
-	Router() chi.Router
-	Server() *http.Server
-	Jet() *jet.Set
+type containerInitFunction func(c *container) error
+
+var containerInitFunctions = make([]containerInitFunction, 10)
+
+func addContainerInit(f containerInitFunction) {
+	containerInitFunctions = append(containerInitFunctions, f)
 }
 
 type container struct {
@@ -30,6 +32,8 @@ type container struct {
 	router chi.Router
 	server *http.Server
 	jet    *jet.Set
+
+	pgxPool *pgxpool.Pool
 }
 
 func (c *container) Jet() *jet.Set {
@@ -52,7 +56,7 @@ func (c *container) Config() *config.Config {
 	return c.config
 }
 
-func New(logger slog.Logger, config *config.Config) Container {
+func New(logger slog.Logger, config *config.Config) (Container, error) {
 	router := createRouter(logger)
 
 	loader, err := httpfs.NewLoader(resource.Templates)
@@ -60,7 +64,7 @@ func New(logger slog.Logger, config *config.Config) Container {
 		panic(err)
 	}
 
-	return &container{
+	c := &container{
 		logger: logger,
 		config: config,
 		router: router,
@@ -70,6 +74,18 @@ func New(logger slog.Logger, config *config.Config) Container {
 		},
 		jet: jet.NewSet(loader, jet.InDevelopmentMode()), // development mode for templates ignores cache - which is not a performace issue in production (evereything is loaded from memory)
 	}
+
+	// var err error
+	for _, f := range containerInitFunctions {
+		initErr := f(c)
+		err = multierr.Append(err, initErr)
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	return c, nil
 }
 
 func createRouter(logger slog.Logger) *chi.Mux {

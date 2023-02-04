@@ -3,3 +3,15 @@ logging:
 
 http:
   public_address: http://localhost:8421/
+  
+# postgres://user:pass@host:port/db
+# query params:
+# statement_cache_mode=prepare|describe > default: prepare (describe for pgbouncer)
+# prefer_simple_protocol=true|false > default: false
+# pool_min_conns=1+ > default: 1
+# pool_max_conns=1+ > default: max(4, numcpus)
+# pool_max_conn_idle_time
+# pool_max_conn_lifetime 
+# pool_max_conn_lifetime_jitter
+# pool_health_check_period 
+postgres: postgres://grove:grove@localhost/grove
