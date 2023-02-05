@@ -10,6 +10,7 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"go.uber.org/multierr"
 	"grove/internal/application"
 	"grove/internal/config"
 	"grove/internal/service"
@@ -70,6 +71,18 @@ var rootCmd = &cobra.Command{
 
 		c, err := service.New(slogger, configuration)
 		if err != nil {
+			return err
+		}
+
+		m, err := c.Migrator()
+		if err != nil {
+			return err
+		}
+		err = m.Up()
+		if err != nil {
+			return err
+		}
+		if err := multierr.Append(m.Close()); err != nil {
 			return err
 		}
 

@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"grove/internal/config"
+	"grove/internal/util"
 	"net/http"
 )
 
@@ -17,4 +18,5 @@ type Container interface {
 	Jet() *jet.Set
 	PostgresPool() (*pgxpool.Pool, error)
 	Postgres() (*pgxpool.Conn, error)
+	Migrator() (util.Migrator, error)
 }

@@ -16,19 +16,21 @@ func must(err error) {
 }
 
 func main() {
-	cwd, err := os.Getwd()
+	wd, err := os.Getwd()
 	must(err)
 
-	assets := filepath.Join(cwd, "frontend", "build")
-	templates := filepath.Join(cwd, "templates")
+	assets := filepath.Join(wd, "frontend", "build")
+	templates := filepath.Join(wd, "templates")
+	migrations := filepath.Join(wd, "migrations")
 
 	fs := union.New(map[string]http.FileSystem{
-		"/templates": http.Dir(templates),
-		"/assets":    http.Dir(assets),
+		"/templates":  http.Dir(templates),
+		"/assets":     http.Dir(assets),
+		"/migrations": http.Dir(migrations),
 	})
 
 	must(vfsgen.Generate(fs, vfsgen.Options{
-		Filename:     filepath.Join(cwd, "assets_generated.go"),
+		Filename:     filepath.Join(wd, "assets_generated.go"),
 		PackageName:  "resource",
 		VariableName: "All",
 		BuildTags:    "!dev",

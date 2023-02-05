@@ -49,3 +49,7 @@ func (c *container) Postgres() (*pgxpool.Conn, error) {
 
 	return pool.Acquire(context.Background())
 }
+
+func (c *container) Migrator() (util.Migrator, error) {
+	return util.NewMigrator(c)
+}
