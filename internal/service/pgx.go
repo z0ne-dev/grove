@@ -51,5 +51,9 @@ func (c *container) Postgres() (*pgxpool.Conn, error) {
 }
 
 func (c *container) Migrator() (util.Migrator, error) {
-	return util.NewMigrator(c)
+	p, err := c.PostgresPool()
+	if err != nil {
+		return nil, err
+	}
+	return util.NewMigrator(p)
 }

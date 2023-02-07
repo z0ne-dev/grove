@@ -19,6 +19,8 @@ func main() {
 	wd, err := os.Getwd()
 	must(err)
 
+	println(wd)
+
 	assets := filepath.Join(wd, "frontend", "build")
 	templates := filepath.Join(wd, "templates")
 	migrations := filepath.Join(wd, "migrations")

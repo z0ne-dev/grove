@@ -62,5 +62,3 @@ func New(container service.Container) App {
 		container: container,
 	}
 }
-
-// TODO: setup routes
