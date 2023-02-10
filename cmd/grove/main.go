@@ -87,7 +87,11 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		application.New(c).ConfigureRouter().ListenAndServe()
+		app := application.New(c)
+		if err := app.ConfigureRouter(); err != nil {
+			return fmt.Errorf("failed to configure routes: %v", err)
+		}
+		app.ListenAndServe()
 		return nil
 	},
 }

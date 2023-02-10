@@ -3,6 +3,7 @@ package application
 import (
 	"cdr.dev/slog"
 	"context"
+	"github.com/go-chi/chi"
 	"github.com/ztrue/shutdown"
 	"grove/internal/service"
 	"net/http"
@@ -14,7 +15,7 @@ import (
 var _ App = (*app)(nil)
 
 type App interface {
-	ConfigureRouter() App
+	ConfigureRouter() error
 	ListenAndServe()
 }
 
@@ -22,12 +23,20 @@ type app struct {
 	container service.Container
 }
 
-func (a *app) ConfigureRouter() App {
+func (a *app) ConfigureRouter() error {
 	r := a.container.Router()
 	set := a.container.Jet()
-	NewGenericRoutes(set).Routes(r)
+	pool, err := a.container.PostgresPool()
+	if err != nil {
+		return err
+	}
 
-	return a
+	r.Group(func(r chi.Router) {
+		r.With(jetGlobalsMiddleware(set, pool))
+		NewGenericRoutes(set).Routes(r)
+	})
+
+	return nil
 }
 
 func (a *app) ListenAndServe() {
