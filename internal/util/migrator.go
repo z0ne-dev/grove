@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	pgxDriver "github.com/golang-migrate/migrate/v4/database/pgx"
 	"github.com/golang-migrate/migrate/v4/source/httpfs"
@@ -23,12 +24,16 @@ func NewMigrator(pool *pgxpool.Pool) (Migrator, error) {
 
 	source, err := httpfs.New(resource.Migrations, "/")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create httpfs source: %w", err)
 	}
 
 	m, err := migrate.NewWithInstance(
 		"httpfs", source,
 		"pgx", driver)
 
-	return m, err
+	if err != nil {
+		return nil, fmt.Errorf("failed to create migrator: %w", err)
+	}
+
+	return m, nil
 }

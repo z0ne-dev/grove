@@ -80,7 +80,7 @@ var rootCmd = &cobra.Command{
 		}
 		err = m.Up()
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to migrate database: %w", err)
 		}
 		if err := multierr.Append(m.Close()); err != nil {
 			return err
