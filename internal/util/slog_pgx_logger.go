@@ -25,7 +25,7 @@ func SlogPgxLogger(logger slog.Logger) func(ctx context.Context, level pgx.LogLe
 			log = logger.Info
 		}
 
-		fields := make([]slog.Field, len(data))
+		fields := make([]slog.Field, 0, len(data))
 		for k, v := range data {
 			fields = append(fields, slog.F(k, v))
 		}
