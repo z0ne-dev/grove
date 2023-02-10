@@ -19,7 +19,7 @@ var _ Container = (*container)(nil)
 
 type containerInitFunction func(c *container) error
 
-var containerInitFunctions = make([]containerInitFunction, 10)
+var containerInitFunctions = make([]containerInitFunction, 0, 10)
 
 func addContainerInit(f containerInitFunction) {
 	containerInitFunctions = append(containerInitFunctions, f)

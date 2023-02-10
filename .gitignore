@@ -205,5 +205,5 @@ dist
 
 
 ### Application Specifics
-/build/
-
+build
+*.windi.jet
