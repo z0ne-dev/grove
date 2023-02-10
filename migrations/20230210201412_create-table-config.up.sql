@@ -5,7 +5,7 @@ create table config
         default xid(CURRENT_TIMESTAMP)
         constraint config_pk
             primary key,
-    user_id public.xid
+    user_id public.xid not null
         constraint config_user
             unique,
     value   jsonb not null
