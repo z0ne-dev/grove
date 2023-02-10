@@ -39,7 +39,7 @@ _node_watch_pid=$!
 popd > /dev/null
 
 info "starting gow"
-gow -c run -tags dev ./cmd/grove/...
+gow -c run -tags dev ./cmd/grove
 
 info "exiting node"
 kill $_node_watch_pid
