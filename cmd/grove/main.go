@@ -14,6 +14,7 @@ import (
 	"grove/internal/application"
 	"grove/internal/config"
 	"grove/internal/service"
+	"grove/internal/util"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -79,7 +80,7 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 		err = m.Up()
-		if err != nil {
+		if err != nil && !util.NoMigrationNeeded(err) {
 			return fmt.Errorf("failed to migrate database: %w", err)
 		}
 		if err := multierr.Append(m.Close()); err != nil {

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
 	pgxDriver "github.com/golang-migrate/migrate/v4/database/pgx"
@@ -36,4 +37,8 @@ func NewMigrator(pool *pgxpool.Pool) (Migrator, error) {
 	}
 
 	return m, nil
+}
+
+func NoMigrationNeeded(err error) bool {
+	return errors.Is(err, migrate.ErrNoChange)
 }
