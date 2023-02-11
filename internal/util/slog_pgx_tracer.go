@@ -25,7 +25,7 @@ func (s *SlogPgxTracer) TraceQueryEnd(ctx context.Context, _ *pgx.Conn, data pgx
 		logger.Error(ctx, "pgx query error", slog.F("command_tag", data.CommandTag), slog.F("err", data.Err))
 		return
 	}
-	logger.Debug(ctx, "pgx query end", slog.F("command_tag", data.CommandTag))
+	logger.Debug(ctx, "pgx query", slog.F("command_tag", data.CommandTag))
 }
 
 func NewSlogPgxTracer(logger slog.Logger) *SlogPgxTracer {

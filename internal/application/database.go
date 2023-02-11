@@ -68,7 +68,7 @@ func migrationsFrom(httpfs http.FileSystem, p string) ([]mgx.Migration, error) {
 
 	migrations := make([]mgx.Migration, 0, len(files))
 
-	for i, file := range files {
+	for _, file := range files {
 		name := path.Base(file.Name())[0 : len(file.Name())-4]
 		filePath := path.Join(p, file.Name())
 		buffer, err := readFile(httpfs, filePath)
@@ -83,7 +83,7 @@ func migrationsFrom(httpfs http.FileSystem, p string) ([]mgx.Migration, error) {
 		}
 
 		mig := mgx.NewRawMigration(name, sql)
-		migrations[i] = mig
+		migrations = append(migrations, mig)
 	}
 
 	return migrations, nil

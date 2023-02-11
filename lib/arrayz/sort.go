@@ -4,7 +4,7 @@ import (
 	"sort"
 )
 
-var _ sort.Interface = (*sortInterface)(nil)
+var _ sort.Interface = (*sortInterface[int])(nil)
 
 type sortInterface[T any] struct {
 	data    []T

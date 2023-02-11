@@ -96,23 +96,24 @@ func (m *Migrator) Migrate(ctx context.Context, db Conn) error {
 		return errors.New("migrator: applied migration number on db cannot be greater than the defined migration list")
 	}
 
-	tx, err := db.Begin(ctx)
-	if err != nil {
-		return fmt.Errorf("migrator: error while starting transaction: %v", err)
-	}
-
-	defer func(tx pgx.Tx, ctx context.Context) {
-		_ = tx.Commit(ctx)
-	}(tx, ctx)
-
 	// plan migrations
 	for idx, migration := range m.migrations[count:] {
+		tx, err := db.Begin(ctx)
+		if err != nil {
+			return fmt.Errorf("migrator: error while starting transaction: %v", err)
+		}
+
 		insertVersion := fmt.Sprintf("INSERT INTO %s (id, version) VALUES ($1, $2)", m.tableName)
 		if err := migrate(ctx, tx, m.logger, insertVersion, migration, idx+count); err != nil {
 			if err := tx.Rollback(ctx); err != nil {
 				panic(fmt.Errorf("migrator: error while rolling back transaction: %v", err))
 			}
 			return fmt.Errorf("migrator: error while running migrations: %v", err)
+		}
+
+		err = tx.Commit(ctx)
+		if err != nil {
+			return fmt.Errorf("migrator: failed to commit transaction: %v", err)
 		}
 	}
 
