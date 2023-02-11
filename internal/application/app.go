@@ -16,6 +16,7 @@ var _ App = (*app)(nil)
 
 type App interface {
 	ConfigureRouter() error
+	MigrateDatabase() error
 	ListenAndServe()
 }
 

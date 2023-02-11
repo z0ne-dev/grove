@@ -1,4 +1,4 @@
-package migratinat0r
+package mgx
 
 import (
 	"context"
@@ -9,7 +9,6 @@ import (
 type Conn interface {
 	Commands
 	Begin(ctx context.Context) (pgx.Tx, error)
-	Close(ctx context.Context) error
 }
 
 type Commands interface {

@@ -1,4 +1,4 @@
-package migratinat0r
+package mgx
 
 import (
 	"context"
@@ -36,7 +36,7 @@ type Logger interface {
 // LoggerFunc is a bridge between Logger and any third party logger
 type LoggerFunc func(msg string, data map[string]any)
 
-// Printf implements Logger interface
+// Log implements Logger interface
 func (f LoggerFunc) Log(msg string, data map[string]any) {
 	f(msg, data)
 }
@@ -45,15 +45,15 @@ func defaultLogger(msg string, data map[string]any) {
 	log.Println(msg, data)
 }
 
-// WithLogger creates an option to allow overriding the stdout logging
-func WithLogger(logger Logger) Option {
+// Log creates an option to allow overriding the stdout logging
+func Log(logger Logger) Option {
 	return func(m *Migrator) {
 		m.logger = logger
 	}
 }
 
-// WithMigrations creates an option with provided migrations
-func WithMigrations(migrations ...Migration) Option {
+// Migrations creates an option with provided migrations
+func Migrations(migrations ...Migration) Option {
 	return func(m *Migrator) {
 		m.migrations = migrations
 	}
@@ -70,17 +70,6 @@ func New(opts ...Option) (*Migrator, error) {
 	}
 
 	return m, nil
-}
-
-func (m *Migrator) AddMigration(migration Migration) {
-	m.migrations = append(m.migrations, migration)
-}
-
-func (m *Migrator) AddMigrationFunc(name string, fn MigrationFunc) {
-	m.migrations = append(m.migrations, &migrationFuncWrapper{
-		name: name,
-		fn:   fn,
-	})
 }
 
 // Migrate applies all available migrations
@@ -120,7 +109,7 @@ func (m *Migrator) Migrate(ctx context.Context, db Conn) error {
 	for idx, migration := range m.migrations[count:] {
 		insertVersion := fmt.Sprintf("INSERT INTO %s (id, version) VALUES ($1, $2)", m.tableName)
 		if err := migrate(ctx, tx, m.logger, insertVersion, migration, idx+count); err != nil {
-			if err = tx.Rollback(ctx); err != nil {
+			if err := tx.Rollback(ctx); err != nil {
 				panic(fmt.Errorf("migrator: error while rolling back transaction: %v", err))
 			}
 			return fmt.Errorf("migrator: error while running migrations: %v", err)
@@ -162,7 +151,7 @@ func migrate(ctx context.Context, db pgx.Tx, logger Logger, insertVersion string
 		return fmt.Errorf("error executing golang migration %s: %w", migration.String(), err)
 	}
 
-	if _, err = db.Exec(ctx, insertVersion); err != nil {
+	if _, err = db.Exec(ctx, insertVersion, id, migration.String()); err != nil {
 		return fmt.Errorf("error updating migration versions: %w", err)
 	}
 	duration := time.Since(start)

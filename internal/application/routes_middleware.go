@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/creasty/defaults"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"grove/internal/db"
 	"net/http"
 )

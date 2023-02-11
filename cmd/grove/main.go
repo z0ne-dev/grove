@@ -10,11 +10,9 @@ import (
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"go.uber.org/multierr"
 	"grove/internal/application"
 	"grove/internal/config"
 	"grove/internal/service"
-	"grove/internal/util"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -75,19 +73,10 @@ var rootCmd = &cobra.Command{
 			return err
 		}
 
-		m, err := c.Migrator()
-		if err != nil {
-			return err
-		}
-		err = m.Up()
-		if err != nil && !util.NoMigrationNeeded(err) {
-			return fmt.Errorf("failed to migrate database: %w", err)
-		}
-		if err := multierr.Append(m.Close()); err != nil {
-			return err
-		}
-
 		app := application.New(c)
+		if err := app.MigrateDatabase(); err != nil {
+			return fmt.Errorf("failed to migrate database: %v", err)
+		}
 		if err := app.ConfigureRouter(); err != nil {
 			return fmt.Errorf("failed to configure routes: %v", err)
 		}

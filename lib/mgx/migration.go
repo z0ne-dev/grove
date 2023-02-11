@@ -1,4 +1,4 @@
-package migratinat0r
+package mgx
 
 import (
 	"context"
@@ -23,4 +23,18 @@ func (m *migrationFuncWrapper) Run(ctx context.Context, tx Commands) error {
 
 func (m *migrationFuncWrapper) String() string {
 	return m.name
+}
+
+func NewMigration(name string, fn MigrationFunc) Migration {
+	return &migrationFuncWrapper{
+		name: name,
+		fn:   fn,
+	}
+}
+
+func NewRawMigration(name, sql string) Migration {
+	return &migrationFuncWrapper{
+		name: name,
+		fn:   func(ctx context.Context, tx Commands) error { _, err := tx.Exec(ctx, sql); return err },
+	}
 }

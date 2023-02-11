@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"github.com/georgysavva/scany/v2/pgxscan"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/rs/xid"
 )
 

@@ -3,8 +3,7 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"grove/internal/util"
 )
 
@@ -23,10 +22,9 @@ func (c *container) createPostgresPool() (*pgxpool.Pool, error) {
 			return nil, fmt.Errorf("failed to parse postgres dsn: %w", err)
 		}
 
-		dsn.ConnConfig.Logger = pgx.LoggerFunc(util.SlogPgxLogger(c.Logger().Named("sql")))
-		dsn.ConnConfig.LogLevel = pgx.LogLevelDebug
+		dsn.ConnConfig.Tracer = util.NewSlogPgxTracer(c.Logger().Named("sql"))
 
-		pool, err := pgxpool.ConnectConfig(context.Background(), dsn)
+		pool, err := pgxpool.NewWithConfig(context.Background(), dsn)
 		if err != nil {
 			return nil, fmt.Errorf("failed to connect to postgres: %w", err)
 		}
@@ -48,12 +46,4 @@ func (c *container) Postgres() (*pgxpool.Conn, error) {
 	}
 
 	return pool.Acquire(context.Background())
-}
-
-func (c *container) Migrator() (util.Migrator, error) {
-	p, err := c.PostgresPool()
-	if err != nil {
-		return nil, err
-	}
-	return util.NewMigrator(p)
 }
