@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-const defaultTableName = "migrations"
+const defaultTableName = "__migrations"
 
 // Migrator is the migrator implementation
 type Migrator struct {
