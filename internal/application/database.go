@@ -19,7 +19,7 @@ import (
 
 	"github.com/z0ne-dev/grove/internal/resource"
 	"github.com/z0ne-dev/grove/lib/arrayz"
-	"github.com/z0ne-dev/grove/lib/mgx"
+	"github.com/z0ne-dev/mgx/v2"
 
 	"cdr.dev/slog"
 )
