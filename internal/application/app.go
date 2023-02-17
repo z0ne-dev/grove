@@ -14,7 +14,7 @@ import (
 	"syscall"
 	"time"
 
-	"grove/internal/service"
+	"github.com/z0ne-dev/grove/internal/service"
 
 	"cdr.dev/slog"
 	"github.com/go-chi/chi"

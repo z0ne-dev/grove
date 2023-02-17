@@ -1,4 +1,4 @@
-module grove
+module github.com/z0ne-dev/grove
 
 go 1.20
 

@@ -11,7 +11,7 @@ import (
 	"context"
 	"fmt"
 
-	"grove/internal/util"
+	"github.com/z0ne-dev/grove/internal/util"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

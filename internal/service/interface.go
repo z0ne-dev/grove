@@ -10,7 +10,7 @@ package service
 import (
 	"net/http"
 
-	"grove/internal/config"
+	"github.com/z0ne-dev/grove/internal/config"
 
 	"cdr.dev/slog"
 	"github.com/CloudyKit/jet/v6"

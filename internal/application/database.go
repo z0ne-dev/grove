@@ -17,11 +17,11 @@ import (
 	"strings"
 	"time"
 
-	"cdr.dev/slog"
+	"github.com/z0ne-dev/grove/internal/resource"
+	"github.com/z0ne-dev/grove/lib/arrayz"
+	"github.com/z0ne-dev/grove/lib/mgx"
 
-	"grove/internal/resource"
-	"grove/lib/arrayz"
-	"grove/lib/mgx"
+	"cdr.dev/slog"
 )
 
 func (a *app) MigrateDatabase() error {

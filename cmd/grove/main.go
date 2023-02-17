@@ -14,14 +14,13 @@ import (
 	"path/filepath"
 	"runtime"
 
+	"github.com/z0ne-dev/grove/internal/application"
+	"github.com/z0ne-dev/grove/internal/config"
+	"github.com/z0ne-dev/grove/internal/service"
+
 	"cdr.dev/slog"
 	"cdr.dev/slog/sloggers/sloghuman"
 	"cdr.dev/slog/sloggers/slogjson"
-
-	"grove/internal/application"
-	"grove/internal/config"
-	"grove/internal/service"
-
 	"github.com/creasty/defaults"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
@@ -57,6 +56,7 @@ var rootCmd = &cobra.Command{
 				wd, _ := os.Getwd()
 				logFile, _ = filepath.Abs(filepath.Join(wd, logFile))
 			}
+			// #nosec G304
 			f, err := os.OpenFile(logFile, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend)
 			if err != nil {
 				return fmt.Errorf("failed to open log file: %w", err)
@@ -85,10 +85,10 @@ var rootCmd = &cobra.Command{
 
 		app := application.New(c)
 		if err := app.MigrateDatabase(); err != nil {
-			return fmt.Errorf("failed to migrate database: %v", err)
+			return fmt.Errorf("failed to migrate database: %w", err)
 		}
 		if err := app.ConfigureRouter(); err != nil {
-			return fmt.Errorf("failed to configure routes: %v", err)
+			return fmt.Errorf("failed to configure routes: %w", err)
 		}
 		app.ListenAndServe()
 		return nil
@@ -111,7 +111,13 @@ func init() {
 func bindFlag(flag, field string) {
 	err := viper.BindPFlag(field, rootCmd.PersistentFlags().Lookup(flag))
 	if err != nil {
-		slogger.Critical(context.Background(), "Failed to bind flag to field", slog.F("flag", flag), slog.F("field", field), slog.Error(err))
+		slogger.Critical(
+			context.Background(),
+			"Failed to bind flag to field",
+			slog.F("flag", flag),
+			slog.F("field", field),
+			slog.Error(err),
+		)
 	}
 }
 
@@ -129,6 +135,7 @@ func initConfig() {
 	}
 }
 
+// Execute root command
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		slogger.Fatal(context.Background(), "Failed to run", slog.Error(err))
