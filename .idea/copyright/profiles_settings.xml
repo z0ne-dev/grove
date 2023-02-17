@@ -4,5 +4,8 @@
       <option name="fileTypeOverride" value="3" />
       <option name="block" value="false" />
     </LanguageOptions>
+    <LanguageOptions name="SQL">
+      <option name="fileTypeOverride" value="1" />
+    </LanguageOptions>
   </settings>
 </component>
