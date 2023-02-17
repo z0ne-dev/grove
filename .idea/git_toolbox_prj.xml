@@ -26,8 +26,8 @@
           <CommitMessageValidationConfig>
             <option name="regexConfig">
               <RegexConfig>
-                <option name="expression" value="(?:✨ NEW|✨ FEAT|⚡️ IMPROVE| FIX| DOC| RELEASE|✅ TEST|♻️ REFACTOR| STYLE)(?: \([^)]+\))?: [A-Z].* \[#\d+\]" />
-                <option name="testInput" value="✅ TEST (holy): Stuff [#15]" />
+                <option name="expression" value="(?:fix|chore|docs|feat|refactor|style|test)(?: \(.*\))?!?: [A-Z].*(\s#\d+)?" />
+                <option name="testInput" value="chore: Github actions" />
               </RegexConfig>
             </option>
           </CommitMessageValidationConfig>
