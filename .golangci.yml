@@ -42,10 +42,10 @@ linters-settings:
     template: |-
       {{ FILE }} Copyright (c) {{ YEAR }} {{ COMPANY }}.
       All Rights Reserved.
-      Licensed under the Apache 2.0 License.
+      Licensed under the EUPL 1.2 License.
       See LICENSE the project root for license information.
 
-      SPDX-License-Identifier: Apache-2.0
+      SPDX-License-Identifier: EUPL-1.2
 
   govet:
     check-shadowing: true
