@@ -1,3 +1,0 @@
-{"ts":"2023-01-29T08:52:53.155356476Z","level":"INFO","msg":"Hello, World!","caller":"/home/criss/Projects/grove/main.go:30","func":"main.main"}
-{"ts":"2023-01-31T15:17:19.629595316Z","level":"INFO","msg":"Hello, World!","caller":"/home/criss/Projects/grove/main.go:30","func":"main.main"}
-{"ts":"2023-01-31T15:26:49.945727818Z","level":"INFO","msg":"Hello, World!","caller":"/home/criss/Projects/grove/main.go:30","func":"main.main"}
