@@ -23,9 +23,13 @@ import (
 
 var _ App = (*app)(nil)
 
+// App is the main application interface.
 type App interface {
+	// ConfigureRouter configures the router.
 	ConfigureRouter() error
+	// MigrateDatabase migrates the database.
 	MigrateDatabase() error
+	// ListenAndServe starts the server.
 	ListenAndServe()
 }
 

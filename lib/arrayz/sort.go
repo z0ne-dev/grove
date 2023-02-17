@@ -14,8 +14,8 @@ import (
 var _ sort.Interface = (*sortInterface[int])(nil)
 
 type sortInterface[T any] struct {
-	data    []T
 	compare func(T, T) bool
+	data    []T
 }
 
 func (s *sortInterface[T]) Len() int {
