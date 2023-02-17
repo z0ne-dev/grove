@@ -18,12 +18,20 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Container is the service container.
 type Container interface {
+	// Logger returns the logger.
 	Logger() slog.Logger
+	// Config returns the config.
 	Config() *config.Config
+	// Router returns the http router.
 	Router() chi.Router
+	// Server returns the http server.
 	Server() *http.Server
+	// Jet returns the jet template engine.
 	Jet() *jet.Set
+	// PostgresPool returns the postgres pool.
 	PostgresPool() (*pgxpool.Pool, error)
+	// Postgres returns a new connection from the pool.
 	Postgres() (*pgxpool.Conn, error)
 }

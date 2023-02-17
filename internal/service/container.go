@@ -9,6 +9,7 @@ package service
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/z0ne-dev/grove/internal/config"
 	"github.com/z0ne-dev/grove/internal/resource"
@@ -45,43 +46,56 @@ type container struct {
 	pgxPool *pgxpool.Pool
 }
 
+// Jet returns the jet template engine.
 func (c *container) Jet() *jet.Set {
 	return c.jet
 }
 
+// Server returns the http server.
 func (c *container) Server() *http.Server {
 	return c.server
 }
 
+// Router returns the http router.
 func (c *container) Router() chi.Router {
 	return c.router
 }
 
+// Logger returns the logger.
 func (c *container) Logger() slog.Logger {
 	return c.logger
 }
 
+// Config returns the config.
 func (c *container) Config() *config.Config {
 	return c.config
 }
 
+// New creates a new service container.
 func New(logger slog.Logger, config *config.Config) (Container, error) {
-	router := createRouter(logger)
+	router := createRouter(&logger)
 
 	loader, err := httpfs.NewLoader(resource.Templates)
 	if err != nil {
 		panic(err)
 	}
 
+	const readHeaderTimeout = 30 * time.Second
+
 	c := &container{
 		logger: logger,
 		config: config,
 		router: router,
 		server: &http.Server{
-			Addr:    config.Http.Listen,
-			Handler: router,
+			Addr:              config.Http.Listen,
+			Handler:           router,
+			ReadHeaderTimeout: readHeaderTimeout,
 		},
-		jet: jet.NewSet(loader, jet.InDevelopmentMode()), // development mode for templates ignores cache - which is not a performace issue in production (evereything is loaded from memory)
+
+		/* development mode for templates ignores cache -
+		which is not a performace issue in production
+		(evereything is loaded from memory)	*/
+		jet: jet.NewSet(loader, jet.InDevelopmentMode()),
 	}
 
 	// var err error
@@ -97,8 +111,9 @@ func New(logger slog.Logger, config *config.Config) (Container, error) {
 	return c, nil
 }
 
-func createRouter(logger slog.Logger) *chi.Mux {
+func createRouter(logger *slog.Logger) *chi.Mux {
 	router := chi.NewRouter()
+	namedLogger := logger.Named("http")
 	router.Use(
 		// catch panics
 		middleware.Recoverer,
@@ -112,7 +127,7 @@ func createRouter(logger slog.Logger) *chi.Mux {
 		middleware.RealIP,
 
 		// logger
-		middleware.RequestLogger(util.NewSlogChiFormatter(logger.Named("http"))),
+		middleware.RequestLogger(util.NewSlogChiFormatter(&namedLogger)),
 
 		// security
 		cors.New(cors.Options{

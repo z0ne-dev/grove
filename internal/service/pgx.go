@@ -31,7 +31,8 @@ func (c *container) createPostgresPool() (*pgxpool.Pool, error) {
 			return nil, fmt.Errorf("failed to parse postgres dsn: %w", err)
 		}
 
-		dsn.ConnConfig.Tracer = util.NewSlogPgxTracer(c.Logger().Named("sql"))
+		namedLogger := c.Logger().Named("sql")
+		dsn.ConnConfig.Tracer = util.NewSlogPgxTracer(&namedLogger)
 
 		pool, err := pgxpool.NewWithConfig(context.Background(), dsn)
 		if err != nil {
@@ -44,10 +45,12 @@ func (c *container) createPostgresPool() (*pgxpool.Pool, error) {
 	return c.pgxPool, nil
 }
 
+// PostgresPool returns the postgres pool.
 func (c *container) PostgresPool() (*pgxpool.Pool, error) {
 	return c.createPostgresPool()
 }
 
+// Postgres returns a new connection from the pool.
 func (c *container) Postgres() (*pgxpool.Conn, error) {
 	pool, err := c.PostgresPool()
 	if err != nil {
