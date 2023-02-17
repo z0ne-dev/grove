@@ -5,7 +5,7 @@
 //
 // SPDX-License-Identifier: EUPL-1.2
 
-package main
+package grove
 
 import (
 	"context"
@@ -140,8 +140,4 @@ func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		slogger.Fatal(context.Background(), "Failed to run", slog.Error(err))
 	}
-}
-
-func main() {
-	Execute()
 }
