@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#
+# create_migration.sh Copyright (c) 2023 z0ne.
+# All Rights Reserved.
+# Licensed under the EUPL 1.2 License.
+# See LICENSE the project root for license information.
+#
+# SPDX-License-Identifier: EUPL-1.2
+#
+
 set -e
 
 name=$1
