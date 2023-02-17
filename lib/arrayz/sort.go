@@ -30,6 +30,7 @@ func (s *sortInterface[T]) Swap(i, j int) {
 	s.data[i], s.data[j] = s.data[j], s.data[i]
 }
 
+// Sort the given array using the given compare function.
 func Sort[T any](a []T, fn func(T, T) bool) []T {
 	if len(a) < 2 {
 		return a

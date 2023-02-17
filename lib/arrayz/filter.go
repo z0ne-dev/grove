@@ -7,6 +7,7 @@
 
 package arrayz
 
+// Filter the given array using the given filter function.
 func Filter[T any](a []T, fn func(T) bool) []T {
 	var r []T
 	for _, v := range a {

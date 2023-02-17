@@ -9,7 +9,6 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -23,14 +22,17 @@ var (
 	_ middleware.LogEntry     = (*SlogChiLogEntry)(nil)
 )
 
+// SlogChiFormatter is a go-chi/chi/middleware.LogFormatter implementation.
 type SlogChiFormatter struct {
-	logger slog.Logger
+	logger *slog.Logger
 }
 
-func NewSlogChiFormatter(logger slog.Logger) *SlogChiFormatter {
+// NewSlogChiFormatter creates a new SlogChiFormatter.
+func NewSlogChiFormatter(logger *slog.Logger) *SlogChiFormatter {
 	return &SlogChiFormatter{logger: logger}
 }
 
+// NewLogEntry is called when a request is received.
 func (formatter *SlogChiFormatter) NewLogEntry(request *http.Request) middleware.LogEntry {
 	fields := []slog.Field{
 		slog.F("request_host", request.Host),
@@ -50,24 +52,28 @@ func (formatter *SlogChiFormatter) NewLogEntry(request *http.Request) middleware
 	}
 }
 
+// SlogChiLogEntry is a go-chi/chi/middleware.LogEntry implementation.
 type SlogChiLogEntry struct {
-	logger  slog.Logger
 	request *http.Request
-	panic   bool
+	logger  slog.Logger
 	fields  []slog.Field
+	panic   bool
 }
 
-func (logEntry *SlogChiLogEntry) Panic(v interface{}, stack []byte) {
+// Panic is called when a panic occurs.
+func (logEntry *SlogChiLogEntry) Panic(v any, stack []byte) {
 	err, ok := v.(error)
 	if !ok {
-		err = fmt.Errorf("%+v", v)
+		panic(v)
 	}
 
 	logEntry.panic = true
 	logEntry.logger = logEntry.logger.With(slog.Error(err), slog.F("stack", string(stack)))
 }
 
+//revive:disable:argument-limit Interface required by go-chi/chi/middleware
 func (logEntry *SlogChiLogEntry) Write(status, bytes int, _ http.Header, elapsed time.Duration, _ any) {
+	//revive:enable:argument-limit
 	fields := []slog.Field{
 		slog.F("response_status", status),
 		slog.F("response_text", http.StatusText(status)),
