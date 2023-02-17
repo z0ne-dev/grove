@@ -1,21 +1,31 @@
+// main.go Copyright (c) 2023 z0ne.
+// All Rights Reserved.
+// Licensed under the EUPL 1.2 License.
+// See LICENSE the project root for license information.
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 package main
 
 import (
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"runtime"
+
 	"cdr.dev/slog"
 	"cdr.dev/slog/sloggers/sloghuman"
 	"cdr.dev/slog/sloggers/slogjson"
-	"context"
-	"fmt"
+
+	"grove/internal/application"
+	"grove/internal/config"
+	"grove/internal/service"
+
 	"github.com/creasty/defaults"
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"grove/internal/application"
-	"grove/internal/config"
-	"grove/internal/service"
-	"os"
-	"path/filepath"
-	"runtime"
 )
 
 var rootCmd = &cobra.Command{
@@ -85,9 +95,11 @@ var rootCmd = &cobra.Command{
 	},
 }
 
-var cfgFile = ""
-var configuration = new(config.Config)
-var slogger = slog.Make(sloghuman.Sink(os.Stdout))
+var (
+	cfgFile       = ""
+	configuration = new(config.Config)
+	slogger       = slog.Make(sloghuman.Sink(os.Stdout))
+)
 
 func init() {
 	cobra.OnInitialize(initConfig)
@@ -96,7 +108,7 @@ func init() {
 	bindFlag("verbose", "logging.level")
 }
 
-func bindFlag(flag string, field string) {
+func bindFlag(flag, field string) {
 	err := viper.BindPFlag(field, rootCmd.PersistentFlags().Lookup(flag))
 	if err != nil {
 		slogger.Critical(context.Background(), "Failed to bind flag to field", slog.F("flag", flag), slog.F("field", field), slog.Error(err))

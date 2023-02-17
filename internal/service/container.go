@@ -1,6 +1,19 @@
+// container.go Copyright (c) 2023 z0ne.
+// All Rights Reserved.
+// Licensed under the EUPL 1.2 License.
+// See LICENSE the project root for license information.
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 package service
 
 import (
+	"net/http"
+
+	"grove/internal/config"
+	"grove/internal/resource"
+	"grove/internal/util"
+
 	"cdr.dev/slog"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/CloudyKit/jet/v6/loaders/httpfs"
@@ -9,10 +22,6 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/multierr"
-	"grove/internal/config"
-	"grove/internal/resource"
-	"grove/internal/util"
-	"net/http"
 )
 
 var _ Container = (*container)(nil)

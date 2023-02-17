@@ -1,15 +1,24 @@
+// app.go Copyright (c) 2023 z0ne.
+// All Rights Reserved.
+// Licensed under the EUPL 1.2 License.
+// See LICENSE the project root for license information.
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 package application
 
 import (
-	"cdr.dev/slog"
 	"context"
-	"github.com/go-chi/chi"
-	"github.com/ztrue/shutdown"
-	"grove/internal/service"
 	"net/http"
 	"os"
 	"syscall"
 	"time"
+
+	"grove/internal/service"
+
+	"cdr.dev/slog"
+	"github.com/go-chi/chi"
+	"github.com/ztrue/shutdown"
 )
 
 var _ App = (*app)(nil)

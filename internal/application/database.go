@@ -1,18 +1,27 @@
+// database.go Copyright (c) 2023 z0ne.
+// All Rights Reserved.
+// Licensed under the EUPL 1.2 License.
+// See LICENSE the project root for license information.
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 package application
 
 import (
-	"cdr.dev/slog"
 	"context"
 	"fmt"
-	"grove/internal/resource"
-	"grove/lib/arrayz"
-	"grove/lib/mgx"
 	"io/fs"
 	"net/http"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"cdr.dev/slog"
+
+	"grove/internal/resource"
+	"grove/lib/arrayz"
+	"grove/lib/mgx"
 )
 
 func (a *app) MigrateDatabase() error {
@@ -61,9 +70,8 @@ func migrationsFrom(httpfs http.FileSystem, p string) ([]mgx.Migration, error) {
 	files = arrayz.Filter(files, func(file os.FileInfo) bool {
 		return !file.IsDir() && strings.HasSuffix(file.Name(), ".sql")
 	})
-	files = arrayz.Sort(files, func(left fs.FileInfo, right fs.FileInfo) bool {
+	files = arrayz.Sort(files, func(left, right fs.FileInfo) bool {
 		return left.Name() < right.Name()
-
 	})
 
 	migrations := make([]mgx.Migration, 0, len(files))
@@ -89,8 +97,8 @@ func migrationsFrom(httpfs http.FileSystem, p string) ([]mgx.Migration, error) {
 	return migrations, nil
 }
 
-func readFile(fs http.FileSystem, filePath string) ([]byte, error) {
-	fileEntry, err := fs.Open(filePath)
+func readFile(httpfs http.FileSystem, filePath string) ([]byte, error) {
+	fileEntry, err := httpfs.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open migration file: %w", err)
 	}

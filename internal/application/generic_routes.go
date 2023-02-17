@@ -1,9 +1,17 @@
+// generic_routes.go Copyright (c) 2023 z0ne.
+// All Rights Reserved.
+// Licensed under the EUPL 1.2 License.
+// See LICENSE the project root for license information.
+//
+// SPDX-License-Identifier: EUPL-1.2
+
 package application
 
 import (
+	"net/http"
+
 	"github.com/CloudyKit/jet/v6"
 	"github.com/go-chi/chi"
-	"net/http"
 )
 
 type GenericRoutes struct {
