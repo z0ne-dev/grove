@@ -15,7 +15,6 @@ import (
 	"github.com/z0ne-dev/grove/internal/resource"
 	"github.com/z0ne-dev/grove/internal/util"
 
-	"cdr.dev/slog"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/CloudyKit/jet/v6/loaders/httpfs"
 	"github.com/go-chi/chi"
@@ -23,6 +22,7 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"go.uber.org/multierr"
+	"golang.org/x/exp/slog"
 )
 
 var _ Container = (*container)(nil)
@@ -36,7 +36,7 @@ func addContainerInit(f containerInitFunction) {
 }
 
 type container struct {
-	logger slog.Logger
+	logger *slog.Logger
 	config *config.Config
 
 	router chi.Router
@@ -62,7 +62,7 @@ func (c *container) Router() chi.Router {
 }
 
 // Logger returns the logger.
-func (c *container) Logger() slog.Logger {
+func (c *container) Logger() *slog.Logger {
 	return c.logger
 }
 
@@ -72,8 +72,8 @@ func (c *container) Config() *config.Config {
 }
 
 // New creates a new service container.
-func New(logger slog.Logger, config *config.Config) (Container, error) {
-	router := createRouter(&logger)
+func New(logger *slog.Logger, config *config.Config) (Container, error) {
+	router := createRouter(logger)
 
 	loader, err := httpfs.NewLoader(resource.Templates)
 	if err != nil {
@@ -87,7 +87,7 @@ func New(logger slog.Logger, config *config.Config) (Container, error) {
 		config: config,
 		router: router,
 		server: &http.Server{
-			Addr:              config.Http.Listen,
+			Addr:              config.HTTP.Listen,
 			Handler:           router,
 			ReadHeaderTimeout: readHeaderTimeout,
 		},
@@ -113,7 +113,6 @@ func New(logger slog.Logger, config *config.Config) (Container, error) {
 
 func createRouter(logger *slog.Logger) *chi.Mux {
 	router := chi.NewRouter()
-	namedLogger := logger.Named("http")
 	router.Use(
 		// catch panics
 		middleware.Recoverer,
@@ -127,7 +126,7 @@ func createRouter(logger *slog.Logger) *chi.Mux {
 		middleware.RealIP,
 
 		// logger
-		middleware.RequestLogger(util.NewSlogChiFormatter(&namedLogger)),
+		middleware.RequestLogger(util.NewSlogChiFormatter(logger.WithGroup("http"))),
 
 		// security
 		cors.New(cors.Options{

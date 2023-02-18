@@ -8,13 +8,13 @@
 package util
 
 import (
-	"context"
 	"net/http"
 	"time"
 
-	"cdr.dev/slog"
+	"github.com/z0ne-dev/grove/lib/slogz"
 
 	"github.com/go-chi/chi/middleware"
+	"golang.org/x/exp/slog"
 )
 
 var (
@@ -34,30 +34,28 @@ func NewSlogChiFormatter(logger *slog.Logger) *SlogChiFormatter {
 
 // NewLogEntry is called when a request is received.
 func (formatter *SlogChiFormatter) NewLogEntry(request *http.Request) middleware.LogEntry {
-	fields := []slog.Field{
-		slog.F("request_host", request.Host),
-		slog.F("request_uri", request.RequestURI),
-		slog.F("request_method", request.Method),
-		slog.F("remote_addr", request.RemoteAddr),
-	}
+	logger := formatter.logger.With(
+		slog.String("request_host", request.Host),
+		slog.String("request_uri", request.RequestURI),
+		slog.String("request_method", request.Method),
+		slog.String("remote_addr", request.RemoteAddr),
+	)
 
 	if reqID := middleware.GetReqID(request.Context()); reqID != "" {
-		fields = append(fields, slog.F("request_id", reqID))
+		logger.With(slog.String("request_id", reqID))
 	}
 
 	return &SlogChiLogEntry{
-		logger:  formatter.logger.With(fields...),
+		logger:  logger,
 		request: request,
-		panic:   false,
 	}
 }
 
 // SlogChiLogEntry is a go-chi/chi/middleware.LogEntry implementation.
 type SlogChiLogEntry struct {
 	request *http.Request
-	logger  slog.Logger
-	fields  []slog.Field
-	panic   bool
+	logger  *slog.Logger
+	err     error
 }
 
 // Panic is called when a panic occurs.
@@ -67,25 +65,25 @@ func (logEntry *SlogChiLogEntry) Panic(v any, stack []byte) {
 		panic(v)
 	}
 
-	logEntry.panic = true
-	logEntry.logger = logEntry.logger.With(slog.Error(err), slog.F("stack", string(stack)))
+	logEntry.err = err
+	logEntry.logger = logEntry.logger.With(
+		slog.String("stack", string(stack)),
+	)
 }
 
 //revive:disable:argument-limit Interface required by go-chi/chi/middleware
 func (logEntry *SlogChiLogEntry) Write(status, bytes int, _ http.Header, elapsed time.Duration, _ any) {
 	//revive:enable:argument-limit
-	fields := []slog.Field{
-		slog.F("response_status", status),
-		slog.F("response_text", http.StatusText(status)),
-		slog.F("response_size", uint64(bytes)),
-		slog.F("response_duration", elapsed),
-	}
+	logger := logEntry.logger.With(
+		slog.Int("response_status", status),
+		slog.String("response_text", http.StatusText(status)),
+		slog.Int("response_size", bytes),
+		slog.Duration("response_duration", elapsed),
+	)
 
-	if !logEntry.panic {
-		if !logEntry.panic {
-			logEntry.logger.Info(context.Background(), "request complete", fields...)
-		} else {
-			logEntry.logger.Error(context.Background(), "request complete", fields...)
-		}
+	if logEntry.err != nil {
+		logger.Error("request error", logEntry.err, slogz.Stringer("err", logEntry.err))
+	} else {
+		logger.Info("request")
 	}
 }

@@ -12,16 +12,16 @@ import (
 
 	"github.com/z0ne-dev/grove/internal/config"
 
-	"cdr.dev/slog"
 	"github.com/CloudyKit/jet/v6"
 	"github.com/go-chi/chi"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/exp/slog"
 )
 
 // Container is the service container.
 type Container interface {
 	// Logger returns the logger.
-	Logger() slog.Logger
+	Logger() *slog.Logger
 	// Config returns the config.
 	Config() *config.Config
 	// Router returns the http router.

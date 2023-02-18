@@ -10,8 +10,10 @@ package util
 import (
 	"context"
 
-	"cdr.dev/slog"
+	"github.com/z0ne-dev/grove/lib/slogz"
+
 	"github.com/jackc/pgx/v5"
+	"golang.org/x/exp/slog"
 )
 
 var _ pgx.QueryTracer = (*SlogPgxTracer)(nil)
@@ -29,6 +31,7 @@ type SlogPgxTracer struct {
 // TraceQueryStart is called when a sql query is started.
 func (_ *SlogPgxTracer) TraceQueryStart(
 	ctx context.Context,
+
 	_ *pgx.Conn,
 	data pgx.TraceQueryStartData,
 ) context.Context {
@@ -40,12 +43,16 @@ func (_ *SlogPgxTracer) TraceQueryStart(
 
 // TraceQueryEnd is called when a sql query has completed.
 func (s *SlogPgxTracer) TraceQueryEnd(ctx context.Context, _ *pgx.Conn, data pgx.TraceQueryEndData) {
-	logger := s.logger.With(slog.F("sql", ctx.Value(contextKeySQL)), slog.F("args", ctx.Value(contextKeySQL)))
+	logger := s.logger.With(
+		slog.String("sql", ctx.Value(contextKeySQL).(string)),
+		slog.String("args", ctx.Value(contextKeySQL).(string)),
+		slogz.Stringer("command_tag", data.CommandTag),
+	)
 	if data.Err != nil {
-		logger.Error(ctx, "pgx query error", slog.F("command_tag", data.CommandTag), slog.F("err", data.Err))
+		logger.Warn("pgx query error", slogz.Stringer("err", data.Err))
 		return
 	}
-	logger.Debug(ctx, "pgx query", slog.F("command_tag", data.CommandTag))
+	logger.Debug("pgx query")
 }
 
 // NewSlogPgxTracer creates a new SlogPgxTracer.

@@ -7,8 +7,12 @@
 
 package main
 
-import "github.com/z0ne-dev/grove/cmd/grove"
+import (
+	"os"
+
+	"github.com/z0ne-dev/grove/cmd/grove"
+)
 
 func main() {
-	grove.Execute()
+	os.Exit(grove.Execute())
 }

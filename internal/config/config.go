@@ -7,21 +7,22 @@
 
 package config
 
-import "cdr.dev/slog"
+import "golang.org/x/exp/slog"
 
+// Config is the configuration for the application.
 type Config struct {
 	Logging  Logging `json:"logging"`
-	Http     Http    `json:"http"`
+	HTTP     HTTP    `json:"http"`
 	Postgres string  `json:"postgres"`
 }
 
-type Http struct {
+// HTTP is the configuration for the http server.
+type HTTP struct {
 	Listen        string `default:":8421" json:"listen"`
 	PublicAddress string `json:"public_address"`
 }
 
+// Logging is the configuration for the logging.
 type Logging struct {
-	EnableFile bool       `json:"enable_file"`
-	File       string     `default:"./logs" json:"file"`
-	Level      slog.Level `default:"2" json:"level"`
+	Level slog.Level `default:"2" json:"level"`
 }

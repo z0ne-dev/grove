@@ -20,8 +20,6 @@ import (
 	"github.com/z0ne-dev/grove/internal/resource"
 	"github.com/z0ne-dev/grove/lib/arrayz"
 	"github.com/z0ne-dev/mgx/v2"
-
-	"cdr.dev/slog"
 )
 
 func (a *app) MigrateDatabase() error {
@@ -31,12 +29,12 @@ func (a *app) MigrateDatabase() error {
 	}
 
 	mig, err := mgx.New(mgx.Log(mgx.LoggerFunc(func(msg string, data map[string]any) {
-		fields := make([]slog.Field, 0, len(data))
+		logger := a.container.Logger().WithGroup("migrations")
 		for k, v := range data {
-			fields = append(fields, slog.F(k, v))
+			logger = logger.With(k, v)
 		}
 
-		a.container.Logger().Named("migrations").Info(context.Background(), msg, fields...)
+		logger.Info(msg)
 	})), mgx.Migrations(
 		migrations...,
 	))

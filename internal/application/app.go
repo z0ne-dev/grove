@@ -16,9 +16,9 @@ import (
 
 	"github.com/z0ne-dev/grove/internal/service"
 
-	"cdr.dev/slog"
 	"github.com/go-chi/chi"
 	"github.com/ztrue/shutdown"
+	"golang.org/x/exp/slog"
 )
 
 var _ App = (*app)(nil)
@@ -56,24 +56,25 @@ func (a *app) ConfigureRouter() error {
 func (a *app) ListenAndServe() {
 	server := a.container.Server()
 	configuration := a.container.Config()
-	slogger := a.container.Logger().Named("server")
+	slogger := a.container.Logger().WithGroup("server")
 
 	go func(h *http.Server) {
 		err := h.ListenAndServe()
-		slogger.Critical(context.Background(), "server error", slog.Error(err))
+		slogger.Error("server error", err)
 	}(server)
 	defer func(s *http.Server) {
 		_ = s.Close() // No need to handle error here
 	}(server)
 
-	slogger.Info(context.Background(), "server started", slog.F("address", configuration.Http.PublicAddress), slog.F("listen", configuration.Http.Listen))
+	slogger.Info("server started", slog.String("address", configuration.HTTP.PublicAddress), slog.String("listen", configuration.HTTP.Listen))
 
 	shutdown.Add(func() {
-		slogger.Debug(context.Background(), "shutting down server")
+		slogger.Debug("shutting down server")
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		err := server.Shutdown(ctx)
 		if err != nil {
-			slogger.Fatal(context.Background(), "error shutting down server", slog.Error(err))
+			slogger.Error("error shutting down server", err)
+			os.Exit(1)
 		}
 		cancel()
 	})
