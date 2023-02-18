@@ -13,7 +13,7 @@ import (
 	"github.com/z0ne-dev/grove/internal/config"
 
 	"github.com/CloudyKit/jet/v6"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"golang.org/x/exp/slog"
 )

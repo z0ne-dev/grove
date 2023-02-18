@@ -13,7 +13,7 @@ import (
 
 	"github.com/z0ne-dev/grove/lib/slogz"
 
-	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/chi/v5/middleware"
 	"golang.org/x/exp/slog"
 )
 

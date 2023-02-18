@@ -11,7 +11,7 @@ import (
 	"net/http"
 
 	"github.com/CloudyKit/jet/v6"
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 )
 
 type GenericRoutes struct {

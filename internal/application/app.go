@@ -16,7 +16,7 @@ import (
 
 	"github.com/z0ne-dev/grove/internal/service"
 
-	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/v5"
 	"github.com/ztrue/shutdown"
 	"golang.org/x/exp/slog"
 )
