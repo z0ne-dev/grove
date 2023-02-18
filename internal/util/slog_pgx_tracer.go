@@ -44,8 +44,8 @@ func (_ *SlogPgxTracer) TraceQueryStart(
 // TraceQueryEnd is called when a sql query has completed.
 func (s *SlogPgxTracer) TraceQueryEnd(ctx context.Context, _ *pgx.Conn, data pgx.TraceQueryEndData) {
 	logger := s.logger.With(
-		slog.String("sql", ctx.Value(contextKeySQL).(string)),
-		slog.String("args", ctx.Value(contextKeySQL).(string)),
+		slogz.Stringer("sql", ctx.Value(contextKeySQL)),
+		slogz.Stringer("args", ctx.Value(contextKeySQL)),
 		slogz.Stringer("command_tag", data.CommandTag),
 	)
 	if data.Err != nil {
