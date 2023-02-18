@@ -11,9 +11,9 @@ import "golang.org/x/exp/slog"
 
 // Config is the configuration for the application.
 type Config struct {
-	Logging  Logging `json:"logging"`
 	HTTP     HTTP    `json:"http"`
 	Postgres string  `json:"postgres"`
+	Logging  Logging `json:"logging"`
 }
 
 // HTTP is the configuration for the http server.
@@ -24,5 +24,5 @@ type HTTP struct {
 
 // Logging is the configuration for the logging.
 type Logging struct {
-	Level slog.Level `default:"2" json:"level"`
+	Level slog.Level `default:"0" json:"level"`
 }

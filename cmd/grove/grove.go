@@ -15,6 +15,7 @@ import (
 	"github.com/z0ne-dev/grove/internal/application"
 	"github.com/z0ne-dev/grove/internal/config"
 	"github.com/z0ne-dev/grove/internal/service"
+	"github.com/z0ne-dev/grove/internal/util"
 
 	"github.com/creasty/defaults"
 	"github.com/mitchellh/mapstructure"
@@ -66,11 +67,18 @@ func preRun(_ *cobra.Command, _ []string) error {
 		return fmt.Errorf("failed to read config: %w", err)
 	}
 
-	if err := viper.Unmarshal(configuration, func(c *mapstructure.DecoderConfig) {
+	decodeConfig := func(c *mapstructure.DecoderConfig) {
 		c.WeaklyTypedInput = true
 		c.Squash = true
 		c.TagName = "json"
-	}); err != nil {
+		c.DecodeHook = mapstructure.ComposeDecodeHookFunc(
+			mapstructure.StringToTimeDurationHookFunc(),
+			mapstructure.StringToSliceHookFunc(","),
+			util.MapStructureJSONUnmarshallerHookFunc(),
+			mapstructure.TextUnmarshallerHookFunc(),
+		)
+	}
+	if err := viper.Unmarshal(configuration, decodeConfig); err != nil {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
@@ -90,19 +98,14 @@ var (
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "", "custom configuration to load")
-	rootCmd.PersistentFlags().CountP("verbose", "v", "Increase verboseness")
-	bindFlag("verbose", "logging.level")
+	rootCmd.PersistentFlags().StringP("log-level", "l", "", "log level (debug, info, warn, error)")
+	bindFlag("log-level", "logging.level")
 }
 
 func bindFlag(flag, field string) {
 	err := viper.BindPFlag(field, rootCmd.PersistentFlags().Lookup(flag))
 	if err != nil {
-		slog.Default().Error(
-			"Failed to bind flag to field",
-			err,
-			slog.String("flag", flag),
-			slog.String("field", field),
-		)
+		panic(fmt.Errorf("failed to bind %s to %s: %w", flag, field, err))
 	}
 }
 
