@@ -72,7 +72,7 @@ func (c *container) Config() *config.Config {
 }
 
 // New creates a new service container.
-func New(logger *slog.Logger, config *config.Config) (Container, error) {
+func New(logger *slog.Logger, cfg *config.Config) (Container, error) {
 	router := createRouter(logger)
 
 	loader, err := httpfs.NewLoader(resource.Templates)
@@ -84,10 +84,10 @@ func New(logger *slog.Logger, config *config.Config) (Container, error) {
 
 	c := &container{
 		logger: logger,
-		config: config,
+		config: cfg,
 		router: router,
 		server: &http.Server{
-			Addr:              config.HTTP.Listen,
+			Addr:              cfg.HTTP.Listen,
 			Handler:           router,
 			ReadHeaderTimeout: readHeaderTimeout,
 		},
