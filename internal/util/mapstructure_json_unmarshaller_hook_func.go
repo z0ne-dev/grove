@@ -15,8 +15,8 @@ import (
 	"github.com/mitchellh/mapstructure"
 )
 
-// reMatchJsonTypes is a very simple regular expression that is supposed to match valid json.
-var reMatchJsonTypes = regexp.MustCompile(`^([\[{"]|\d+$|null$|true$|false$)`)
+// reMatchJSONTypes is a very simple regular expression that is supposed to match valid json.
+var reMatchJSONTypes = regexp.MustCompile(`^([\[{"]|\d+$|null$|true$|false$)`)
 
 // MapStructureJSONUnmarshallerHookFunc is a mapstructure.DecodeHookFuncType that unmarshals using json.Unmarshaler.
 func MapStructureJSONUnmarshallerHookFunc() mapstructure.DecodeHookFuncType {
@@ -36,9 +36,7 @@ func MapStructureJSONUnmarshallerHookFunc() mapstructure.DecodeHookFuncType {
 			return data, nil
 		}
 
-		if str == "" {
-			str = "null"
-		} else if !reMatchJsonTypes.MatchString(str) {
+		if !reMatchJSONTypes.MatchString(str) {
 			str = `"` + str + `"`
 		}
 
