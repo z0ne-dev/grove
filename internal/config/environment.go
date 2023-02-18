@@ -8,8 +8,10 @@
 package config
 
 const (
+	// ApplicationName is the name of the application.
 	ApplicationName = "grove"
 )
 
-var Version = "0.0.0" // Major.Minor.Patch[-branch.distance][+commit-hash]
-// 1.0.0-trunk.1+abcdef
+// Version is the current version of the application.
+// Format: Major.Minor.Patch[-branch.distance][-commit-hash]
+var Version = "0.0.0" //
