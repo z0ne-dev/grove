@@ -16,11 +16,13 @@ import (
 	"golang.org/x/exp/slog"
 )
 
+type contextKey string
+
 var _ pgx.QueryTracer = (*SlogPgxTracer)(nil)
 
 var (
-	contextKeySQL  = struct{}{}
-	contextKeyArgs = struct{}{}
+	contextKeySQL  contextKey = "sql"
+	contextKeyArgs contextKey = "args"
 )
 
 // SlogPgxTracer is a pgx.QueryTracer that logs queries using slog.
@@ -31,7 +33,6 @@ type SlogPgxTracer struct {
 // TraceQueryStart is called when a sql query is started.
 func (_ *SlogPgxTracer) TraceQueryStart(
 	ctx context.Context,
-
 	_ *pgx.Conn,
 	data pgx.TraceQueryStartData,
 ) context.Context {
@@ -45,7 +46,7 @@ func (_ *SlogPgxTracer) TraceQueryStart(
 func (s *SlogPgxTracer) TraceQueryEnd(ctx context.Context, _ *pgx.Conn, data pgx.TraceQueryEndData) {
 	logger := s.logger.With(
 		slogz.Stringer("sql", ctx.Value(contextKeySQL)),
-		slogz.Stringer("args", ctx.Value(contextKeySQL)),
+		slogz.Stringer("args", ctx.Value(contextKeyArgs)),
 		slogz.Stringer("command_tag", data.CommandTag),
 	)
 	if data.Err != nil {
