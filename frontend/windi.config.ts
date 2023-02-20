@@ -15,9 +15,8 @@ module.exports = defineConfig({
     theme: {},
     plugins: [],
     preflight: true,
-    prefix: "grove-",
-    exclude: [/node_modules\/\*\*\/\*/],
     extract: {
-        include: ["**/*.jet"],
+        include: ["../**/*.jet"],
+        exclude: ["../**/*.windi.jet"]
     }
 })
