@@ -6,15 +6,22 @@
   "scripts": {
     "watch": "npm-run-all --parallel watch:*",
     "watch:windi": "windicss ../templates/**/*.jet ../templates/*.jet -f ./windi.config.ts -tdo build/main.css",
-    "build": "npm-run-all --parallel build:*",
+    "watch:images": "node image.js watch",
+    "build": "npm-run-all --serial build:*",
     "build:windi": "windicss ../templates/**/*.jet ../templates/*.jet -f ./windi.config.ts -tcmo build/main.css",
+    "build:images": "node image.js build",
+    "clean": "rimraf build",
     "windi": "npm run watch:windi"
   },
   "author": "Kura Bloodlust",
   "license": "EUPL-1.2",
+  "matches": {},
   "devDependencies": {
     "@types/node": "^18.13.0",
     "npm-run-all": "^4.1.5",
-    "windicss": "^3.5.6"
+    "rimraf": "^4.1.2",
+    "sharp": "^0.31.3",
+    "windicss": "^3.5.6",
+    "yaml": "^2.2.1"
   }
 }
