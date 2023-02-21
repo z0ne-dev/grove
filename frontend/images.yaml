@@ -4,8 +4,25 @@
 # md: 768px
 # lg: 1024px
 # xl: 1280px
+# 2xl: 1536px
 
 - input: grove.jpg
   output: grove-sm.avif
   quality: 50
-  resize: x240
+  resize: x640
+- input: grove.jpg
+  output: grove-md.avif
+  quality: 50
+  resize: x768
+- input: grove.jpg
+  output: grove-lg.avif
+  quality: 50
+  resize: x1024
+- input: grove.jpg
+  output: grove-xl.avif
+  quality: 50
+  resize: x1280
+- input: grove.jpg
+  output: grove-2xl.avif
+  quality: 50
+  resize: x1536
