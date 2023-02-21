@@ -51,7 +51,7 @@ async function generateImages() {
 
         await sharp(path.join("images", image.input), {animated: true})
             .resize(w, h, {fit: "outside"})
-            .avif({quality: image.quality, lossless: true, effort: 9})
+            .avif({quality: image.quality, effort: 0})
             .toFile(path.join("build/images", image.output))
 
         // output file size difference
