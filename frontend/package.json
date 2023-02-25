@@ -7,9 +7,11 @@
     "watch": "npm-run-all --parallel watch:*",
     "watch:windi": "windicss ../templates/**/*.jet ../templates/*.jet -f ./windi.config.ts -tdo build/main.css",
     "watch:images": "node image.js watch",
+    "watch:scripts": "node script.js watch",
     "build": "npm-run-all --serial build:*",
     "build:windi": "windicss ../templates/**/*.jet ../templates/*.jet -f ./windi.config.ts -tcmo build/main.css",
     "build:images": "node image.js build",
+    "build:scripts": "node script.js build",
     "clean": "rimraf build",
     "windi": "npm run watch:windi"
   },
@@ -23,5 +25,9 @@
     "sharp": "^0.31.3",
     "windicss": "^3.5.6",
     "yaml": "^2.2.1"
+  },
+  "dependencies": {
+    "es-module-shims": "^1.6.3",
+    "htmx.org": "^1.8.5"
   }
 }
