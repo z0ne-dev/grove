@@ -7,6 +7,17 @@
 
 //go:build !dev
 
-//go:generate go run ../../scripts/generate_assets.go
+//go:generate sh ../scripts/generate.sh
 
 package resource
+
+import "embed"
+
+var (
+	//go:embed frontend/build
+	Assets embed.FS
+	//go:embed templates
+	Templates embed.FS
+	//go:embed migrations
+	Migrations embed.FS
+)
