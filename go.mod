@@ -11,13 +11,11 @@ require (
 	github.com/jackc/pgx/v5 v5.3.0
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rs/xid v1.4.0
-	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749
-	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 	github.com/z0ne-dev/mgx/v2 v2.0.1
 	github.com/ztrue/shutdown v0.1.1
-	go.uber.org/multierr v1.9.0
+	go.uber.org/multierr v1.10.0
 	golang.org/x/exp v0.0.0-20230213192124-5e25df0256eb
 )
 
@@ -37,7 +35,6 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.2 // indirect
-	go.uber.org/atomic v1.10.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.5.0 // indirect
