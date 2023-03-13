@@ -8,11 +8,9 @@ require (
 	github.com/georgysavva/scany/v2 v2.0.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-chi/cors v1.2.1
-	github.com/jackc/pgx/v5 v5.3.0
+	github.com/jackc/pgx/v5 v5.3.1
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/rs/xid v1.4.0
-	github.com/shurcooL/httpfs v0.0.0-20190707220628-8d4bc4ba7749
-	github.com/shurcooL/vfsgen v0.0.0-20200824052919-0d455de96546
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.15.0
 	github.com/z0ne-dev/mgx/v2 v2.0.1
